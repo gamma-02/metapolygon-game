@@ -14,7 +14,7 @@ float atan2(float x, float y) {
 }
 
 // https://www.desmos.com/calculator/ov9odkqnry
-float polygon(float x, float y, float centerX, float centerY, float scaleX, float scaleY, int sides) {
+float polygon(float x, float y, float centerX, float centerY, float scaleX, float scaleY, float sides) {
     x -= centerX;
     y -= centerY;
     x *= scaleX;
@@ -33,6 +33,10 @@ float polygon(float x, float y, float centerX, float centerY, float scaleX, floa
     ), -1);
 }
 
+float polygon(float x, float y, float centerX, float centerY, float sides) {
+    return polygon(x, y, centerX, centerY, 1.0, 1.0, sides);
+}
+
 float circle(float x, float y, float centerX, float centerY, float scaleX, float scaleY) {
     x -= centerX;
     y -= centerY;
@@ -47,6 +51,10 @@ float circle(float x, float y, float centerX, float centerY, float scaleX, float
     );
 }
 
+float circle(float x, float y, float centerX, float centerY) {
+    return circle(x, y, centerX, centerY, 1.0, 1.0);
+}
+
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 layout(r32f, binding = 0) uniform image2D out_tex;
 
@@ -54,10 +62,33 @@ layout(r32f, binding = 0) uniform image2D out_tex;
 void main() {
     // get position to read/write data from
     ivec2 pos = ivec2(gl_GlobalInvocationID.xy);// get value stored in the image
+    ivec2 posPixel = ivec2((gl_GlobalInvocationID.xy - vec2(1024, 1024 /* just a bit of safety, probably unecessary */)) * vec2(10, -10));// get value stored in the image
     float in_val = imageLoad(out_tex, pos).r;// store new value in image
-    imageStore(out_tex, pos, vec4(abs(cos(float(pos.x) / (2048.0 / (3.14 / 2)))), 0, 0.0, 1));
-    if (polygon(pos.x, pos.y, 1024, 1024, 5, 5, 8) >= 0.0005) {
+
+    float m = -2990;
+    float v = -2120;
+
+    float c = 100;
+    float n = 790;
+
+    float d = 1150;
+    float r = 420;
+
+    float p = 2880;
+    float z = 3460;
+
+    float u = -3750;
+    float i = 2110;
+
+    float q = 2810;
+    float k = -1220;
+
+    imageStore(out_tex, pos, vec4(1, 0, 0.0, 1));
+    if (
+        ((((polygon(posPixel.x,posPixel.y,c,v,3)+polygon(posPixel.x,posPixel.y,p,z,5)+polygon(posPixel.x,posPixel.y,u,i,5)+polygon(q,k,d,r,5)))/5)/
+        (polygon(posPixel.x,posPixel.y,m,n,6)+circle(posPixel.x,posPixel.y,d,r)))
+        >=0.5
+    ) {
         imageStore(out_tex, pos, vec4(0, 0, 0.0, 1));
     }
-    //    imageStore(out_tex, pos, vec4(abs(cos(float(pos.x) / (2048.0 / (3.14 / 2)))), 0, 0.0, 1));
 }
