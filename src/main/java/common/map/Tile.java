@@ -19,13 +19,15 @@ public class Tile {
 		this.x = x;
 		this.y = y;
 		
+		long start = System.nanoTime();
 		texture = new Texture(Options.gridSize, Options.gridSize, GL11.GL_RED);
+		System.out.println((System.nanoTime() - start) + " ns");
 		
 		Shaders.getMap().bind();
 		GL20.glActiveTexture(GL20.GL_TEXTURE0);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.id());
 		
-		long start = System.nanoTime();
+		start = System.nanoTime();
 		GL43C.glDispatchCompute(Options.gridSize, Options.gridSize, 1);
 		GL43C.glMemoryBarrier(GL43C.GL_ALL_BARRIER_BITS);
 		System.out.println((System.nanoTime() - start) + " ns");
@@ -35,6 +37,8 @@ public class Tile {
 		
 		start = System.nanoTime();
 		ByteBuffer dataBuffer = texture.getValuesBuffer(stack, GL11.GL_RGBA);
+		System.out.println((System.nanoTime() - start) + " ns");
+		start = System.nanoTime();
 		STBImageWrite.stbi_write_png("test.png", Options.gridSize, Options.gridSize, 4, dataBuffer, 0);
 		System.out.println((System.nanoTime() - start) + " ns");
 		stack.pop();
