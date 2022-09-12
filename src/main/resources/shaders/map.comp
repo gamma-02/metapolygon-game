@@ -1,0 +1,63 @@
+#version 430
+
+// https://softwareengineering.stackexchange.com/q/328019
+#define PI 3.1415926538
+
+
+
+
+
+
+
+float atan2(float x, float y) {
+    return atan(x / 2, y / 2);
+}
+
+// https://www.desmos.com/calculator/ov9odkqnry
+float polygon(float x, float y, float centerX, float centerY, float scaleX, float scaleY, int sides) {
+    x -= centerX;
+    y -= centerY;
+    x *= scaleX;
+    y *= scaleY;
+
+    // luigi: somehow I got this on my first try
+    return pow(max(0,
+        (1 / cos(PI / sides)) *
+        cos(abs(
+            ((2 * PI) / sides) *
+            floor(sides / (2 * PI) * atan2(y, x)) +
+            (PI / sides) -
+            atan2(y, x)
+        )) *
+        sqrt(x * x + y * y)
+    ), -1);
+}
+
+float circle(float x, float y, float centerX, float centerY, float scaleX, float scaleY) {
+    x -= centerX;
+    y -= centerY;
+    x *= scaleX;
+    y *= scaleY;
+
+    // luigi: this however, took me like 3 tries
+    // I forgot the "1 / "
+    return 1 / sqrt(
+        (x * x) +
+        (y * y)
+    );
+}
+
+layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+layout(r32f, binding = 0) uniform image2D out_tex;
+
+// I have the empty lines above because I'm not used to looking at text above like half way down my screen
+void main() {
+    // get position to read/write data from
+    ivec2 pos = ivec2(gl_GlobalInvocationID.xy);// get value stored in the image
+    float in_val = imageLoad(out_tex, pos).r;// store new value in image
+    imageStore(out_tex, pos, vec4(abs(cos(float(pos.x) / (2048.0 / (3.14 / 2)))), 0, 0.0, 1));
+    if (polygon(pos.x, pos.y, 1024, 1024, 5, 5, 8) >= 0.0005) {
+        imageStore(out_tex, pos, vec4(0, 0, 0.0, 1));
+    }
+    //    imageStore(out_tex, pos, vec4(abs(cos(float(pos.x) / (2048.0 / (3.14 / 2)))), 0, 0.0, 1));
+}
