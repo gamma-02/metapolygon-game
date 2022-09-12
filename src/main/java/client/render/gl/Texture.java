@@ -1,4 +1,4 @@
-package client.render.utils;
+package client.render.gl;
 
 import common.Options;
 import org.lwjgl.opengl.*;
@@ -40,32 +40,30 @@ public class Texture {
 		stack.pop();
 	}
 	
-	public byte[] getValues() {
-		MemoryStack stack = MemoryStack.stackPush();
-		ByteBuffer dataBuffer = stack.malloc(Options.gridSize * Options.gridSize * 4);
-		GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, type, GL11.GL_UNSIGNED_BYTE, dataBuffer);
+	public ByteBuffer getValuesBuffer(MemoryStack stack) {
+		return getValuesBuffer(stack, type);
+	}
+	
+	public ByteBuffer getValuesBuffer(MemoryStack stack, int type) {
 		int mul = switch (type) {
 			case GL11.GL_RED, GL11.GL_GREEN, GL11.GL_BLUE, GL11.GL_ALPHA -> 1;
 			case GL11.GL_RGB -> 3;
 			default -> 4;
 		};
-		byte[] data = new byte[Options.gridSize * Options.gridSize * mul];
-		for (int i = 0; i < data.length; i++) data[i] = dataBuffer.get(i);
-		stack.pop();
-		return data;
+		ByteBuffer dataBuffer = stack.malloc(Options.gridSize * Options.gridSize * mul);
+		GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, type, GL11.GL_UNSIGNED_BYTE, dataBuffer);
+		return dataBuffer;
+	}
+	
+	public byte[] getValues() {
+		return getValues(type);
 	}
 	
 	public byte[] getValues(int type) {
 		MemoryStack stack = MemoryStack.stackPush();
-		ByteBuffer dataBuffer = stack.malloc(Options.gridSize * Options.gridSize * 4);
-		GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, type, GL11.GL_UNSIGNED_BYTE, dataBuffer);
-		int mul = switch (type) {
-			case GL11.GL_RED, GL11.GL_GREEN, GL11.GL_BLUE, GL11.GL_ALPHA -> 1;
-			case GL11.GL_RGB -> 3;
-			default -> 4;
-		};
-		byte[] data = new byte[Options.gridSize * Options.gridSize * mul];
-		for (int i = 0; i < data.length; i++) data[i] = dataBuffer.get(i);
+		ByteBuffer buffer = getValuesBuffer(stack, type);
+		byte[] data = new byte[buffer.limit()];
+		for (int i = 0; i < data.length; i++) data[i] = buffer.get(i);
 		stack.pop();
 		return data;
 	}

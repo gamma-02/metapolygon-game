@@ -2,12 +2,10 @@ package client;
 
 import client.render.glfw.Window;
 import client.render.utils.Shaders;
-import common.Options;
 import common.map.Tile;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.Configuration;
-import org.lwjgl.system.MemoryStack;
 
 public class Main {
 	protected static Window window;
@@ -17,7 +15,7 @@ public class Main {
 	}
 	
 	public static void main(String[] args) {
-		Configuration.STACK_SIZE.set(2048 * 32);
+		Configuration.STACK_SIZE.set(2048 * 64);
 		if (!GLFW.glfwInit())
 			throw new RuntimeException("Could not initialize GLFW");
 		
