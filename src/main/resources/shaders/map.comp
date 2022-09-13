@@ -62,7 +62,6 @@ layout(r32f, binding = 0) uniform image2D out_tex;
 void main() {
     // get position to read/write data from
     ivec2 pos = ivec2(gl_GlobalInvocationID.xy);// get value stored in the image
-//    ivec2 posPixel = ivec2((gl_GlobalInvocationID.xy - vec2(2048, 2048 /* just a bit of safety, probably unecessary */)) * vec2(5, -5));// get value stored in the image
     ivec2 posPixel = ivec2((gl_GlobalInvocationID.xy - vec2(1024, 1024 /* just a bit of safety, probably unecessary */)) * vec2(10, -10));// get value stored in the image
     float in_val = imageLoad(out_tex, pos).r;// store new value in image
 

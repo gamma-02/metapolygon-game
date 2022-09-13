@@ -5,6 +5,7 @@ import client.render.gl.Texture;
 import common.Options;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL43;
 import org.lwjgl.opengl.GL43C;
 import org.lwjgl.stb.STBImageWrite;
 import org.lwjgl.system.MemoryStack;

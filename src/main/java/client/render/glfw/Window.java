@@ -5,6 +5,8 @@ import org.lwjgl.glfw.GLFWVidMode;
 
 public class Window {
 	long handle;
+	private final int[] width = new int[1];
+	private final int[] height = new int[1];
 	
 	public Window(int width, int height, String name) {
 		handle = GLFW.glfwCreateWindow(width, height, name, 0, 0);
@@ -49,6 +51,7 @@ public class Window {
 	public void finishFrame() {
 		GLFW.glfwSwapBuffers(handle);
 		GLFW.glfwPollEvents();
+		GLFW.glfwGetWindowSize(handle, width, height);
 	}
 	
 	public void dispose() {
@@ -58,5 +61,13 @@ public class Window {
 	
 	public void grabContext() {
 		GLFW.glfwMakeContextCurrent(handle);
+	}
+	
+	public int getWidth() {
+		return width[0];
+	}
+	
+	public int getHeight() {
+		return height[0];
 	}
 }
