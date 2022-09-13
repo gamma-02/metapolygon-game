@@ -6,4 +6,7 @@ public interface Uniform {
 	void upload();
 	void set(Matrix4f matrix);
 	void set(int val);
+	void set(int... val);
+	void set(float val);
+	void set(float... val);
 }

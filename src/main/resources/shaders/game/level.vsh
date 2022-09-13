@@ -23,6 +23,6 @@ void main() {
         amt = mod((amt / 3.0) + 0.96, 1.0);
         amt = abs(amt);
     }
-    color = Color * vec4(amt, amt, amt, 1);
+    color = Color * vec4(amt, amt, amt, 1) + texture(tex0, Tex);
     texCoord = Tex;
 }

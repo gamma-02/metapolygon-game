@@ -11,6 +11,7 @@ public class VertexFormat {
 	public static final VertexFormat POSITION = new VertexFormat(VertexElement.POSITION);
 	public static final VertexFormat POSITION_COLOR = new VertexFormat(VertexElement.POSITION, VertexElement.COLOR);
 	public static final VertexFormat POSITION_COLOR_NORMAL = new VertexFormat(VertexElement.POSITION, VertexElement.COLOR, VertexElement.NORMAL);
+	public static final VertexFormat POSITION_COLOR_TEX = new VertexFormat(VertexElement.POSITION, VertexElement.COLOR, VertexElement.UV);
 	public static final VertexFormat POSITION_COLOR_NORMAL_TEX = new VertexFormat(VertexElement.POSITION, VertexElement.COLOR, VertexElement.NORMAL, VertexElement.UV);
 	
 	public VertexFormat(VertexElement... elements) {

@@ -1,10 +1,10 @@
 package client.render.gl;
 
+import client.render.Uniform;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryStack;
-import client.render.Uniform;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -84,5 +84,22 @@ public class GLUniform implements Uniform {
 	@Override
 	public void set(int val) {
 		ints.put(0, val);
+	}
+	
+	@Override
+	public void set(int... val) {
+		for (int i = 0; i < val.length; i++)
+			ints.put(i, val[i]);
+	}
+	
+	@Override
+	public void set(float val) {
+		floats.put(0, val);
+	}
+	
+	@Override
+	public void set(float... val) {
+		for (int i = 0; i < val.length; i++)
+			floats.put(i, val[i]);
 	}
 }

@@ -3,8 +3,6 @@ package client.render.utils;
 import client.render.gl.Shader;
 import client.render.gl.ShaderProgram;
 import common.utils.StreamUtils;
-import org.lwjgl.opengl.GL43;
-import org.lwjgl.opengl.GL43C;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -12,6 +10,7 @@ import java.util.HashMap;
 
 public class Shaders {
 	private static ShaderProgram STANDARD = null;
+	private static ShaderProgram LEVEL = null;
 	private static ShaderProgram MAP = null;
 	public static HashMap<String, ShaderProgram> programHashMap = new HashMap<>();
 	
@@ -23,9 +22,14 @@ public class Shaders {
 		return MAP;
 	}
 	
+	public static ShaderProgram getLevel() {
+		return LEVEL;
+	}
+	
 	public static void reload() {
 		STANDARD = loadShader("standard");
-		MAP = loadShader("map");
+		LEVEL = loadShader("game/level");
+		MAP = loadShader("computation/map");
 	}
 	
 	public static ShaderProgram loadShader(String resource) {

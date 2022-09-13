@@ -2,6 +2,7 @@ package client.render.gl;
 
 import client.render.Uniform;
 import client.render.exceptions.ShaderCompilationException;
+import client.render.utils.FlagUniform;
 import common.utils.TheUnsafe;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
@@ -60,5 +61,14 @@ public class ShaderProgram {
 			uniforms.put(name, uniform);
 		}
 		return uniforms.get(name);
+	}
+	
+	public FlagUniform getFlagUniform(String name) {
+		if (!uniforms.containsKey(name)) {
+			int location = GL20.glGetUniformLocation(id, name);
+			FlagUniform uniform = new FlagUniform(location, id);
+			uniforms.put(name, uniform);
+		}
+		return (FlagUniform) uniforms.get(name);
 	}
 }
