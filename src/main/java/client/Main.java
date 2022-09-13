@@ -40,19 +40,19 @@ public class Main {
 		Shaders.reload();
 		
 		FloatBufferBuilder bufferBuilder = new FloatBufferBuilder();
-//		bufferBuilder.appendFloats(
-//				-1, -1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1,
-//				1, -1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1,
-//				1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0,
-//				-1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0
-//		);
 		bufferBuilder.appendFloats(
-				-1, -1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0,
-				1, -1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1,
-				1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1,
-				-1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0
+				-1, -1, 0, 1, 1, 1, 1, 1, 0, 1,
+				1, -1, 0, 1, 1, 1, 1, 1, 1, 1,
+				1, 1, 0, 1, 1, 1, 1, 1, 1, 0,
+				-1, 1, 0, 1, 1, 1, 1, 1, 0, 0
 		);
-		vbo = new VertexBuffer(VertexFormat.POSITION_COLOR_NORMAL_TEX, bufferBuilder.getData());
+//		bufferBuilder.appendFloats(
+//				-1, -1, 0, 1, 0, 1, 1, 1, 0, 0,
+//				1, -1, 0, 1, 1, 1, 0, 1, 0, 1,
+//				1, 1, 0, 1, 0, 1, 1, 1, 1, 1,
+//				-1, 1, 0, 1, 1, 0, 1, 1, 1, 0
+//		);
+		vbo = new VertexBuffer(VertexFormat.POSITION_COLOR_TEX, bufferBuilder.getData());
 		
 		ShaderProgram program = Shaders.getLevel();
 		Uniform matrix = program.getUniform("modelViewMatrix", 4 * 4, true);
@@ -99,7 +99,7 @@ public class Main {
 	public static void tick() {
 		ShaderProgram program = Shaders.getLevel();
 		
-		VertexFormat.POSITION_COLOR_NORMAL_TEX.setup();
+		VertexFormat.POSITION_COLOR_TEX.setup();
 		GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_COLOR_BUFFER_BIT);
 		
 		GL11.glViewport(0, 0, window.getWidth(), window.getHeight());
@@ -109,7 +109,7 @@ public class Main {
 		vbo.draw(DrawMode.QUADS);
 		vbo.unbind();
 		program.unbind();
-		VertexFormat.POSITION_COLOR_NORMAL_TEX.teardown();
+		VertexFormat.POSITION_COLOR_TEX.teardown();
 		
 		window.finishFrame();
 	}

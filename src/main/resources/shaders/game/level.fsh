@@ -11,5 +11,5 @@ out vec4 colorOut;
 
 void main() {
     colorOut = color;
-    if ((flags & 2) == 2) colorOut *= texture(tex0, texCoord.xy);
+    colorOut *= texture(tex0, texCoord.xy);
 }
