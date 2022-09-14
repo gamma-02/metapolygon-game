@@ -59,7 +59,7 @@ layout(location = 2) uniform vec2 srcSize;
 void main() {
     // get position to read/write data from
     ivec2 pos = ivec2(gl_GlobalInvocationID.xy);
-    ivec2 posPixel = ivec2(((gl_GlobalInvocationID.xy / srcSize) - vec2(0.5, 0.5) + offset) * vec2(2048 * 2, 2048 * -2));
+    ivec2 posPixel = ivec2(((gl_GlobalInvocationID.xy / srcSize) - vec2(0.5, 0.5)) * vec2(2048 * 2, 2048 * -2));
     vec2 posCompute = vec2(0,0);
     if (srcSize.x < srcSize.y) {
         float maxRes = srcSize.x / srcSize.y;
@@ -68,6 +68,7 @@ void main() {
         float maxRes = srcSize.y / srcSize.x;
         posCompute = ((vec2(posPixel.x / maxRes, posPixel.y)));
     }
+    posCompute = posCompute + (offset * vec2(2048, -2048));
 
     float m = -2990;
     float v = -2120;
