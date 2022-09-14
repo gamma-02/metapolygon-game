@@ -3,6 +3,9 @@ package client.render.glfw;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 
+import java.util.ArrayList;
+import java.util.function.Consumer;
+
 public class Window {
 	long handle;
 	private final int[] width = new int[1];
@@ -26,6 +29,16 @@ public class Window {
 				(vidmode.width() - width[0]) / 2,
 				(vidmode.height() - height[0]) / 2
 		);
+		
+		GLFW.glfwSetKeyCallback(handle, (long window, int key, int scancode, int action, int mods) -> {
+			char c = (char) key;
+			if ((mods & GLFW.GLFW_MOD_SHIFT) == GLFW.GLFW_MOD_SHIFT) c = Character.toUpperCase(c);
+			else c = Character.toLowerCase(c);
+			KeyEvent event = new KeyEvent(action, key, scancode, mods, c);
+			for (Consumer<KeyEvent> keyListener : keyListeners) {
+				keyListener.accept(event);
+			}
+		});
 	}
 	
 	public void setSwapInterval(int interval) {
@@ -57,6 +70,16 @@ public class Window {
 	public void dispose() {
 		hide();
 		GLFW.glfwDestroyWindow(handle);
+	}
+	
+	ArrayList<Consumer<KeyEvent>> keyListeners = new ArrayList<>();
+	
+	public void addKeyListener(Consumer<KeyEvent> eventConsumer) {
+		keyListeners.add(eventConsumer);
+	}
+	
+	public void removeKeyListener(Consumer<KeyEvent> eventConsumer) {
+		keyListeners.remove(eventConsumer);
 	}
 	
 	public void grabContext() {

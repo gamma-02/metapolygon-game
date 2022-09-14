@@ -13,8 +13,11 @@ uniform mat4 projectionMatrix;
 uniform mat4 modelViewMatrix;
 uniform sampler2D tex0;
 
+uniform vec2 scale;
+uniform vec2 offset;
+
 void main() {
     gl_Position = projectionMatrix * modelViewMatrix * Position;
     color = Color + texture(tex0, Tex);
-    texCoord = Tex;
+    texCoord = (Tex * scale) + offset;
 }

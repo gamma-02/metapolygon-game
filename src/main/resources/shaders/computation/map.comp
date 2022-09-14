@@ -3,12 +3,6 @@
 // https://softwareengineering.stackexchange.com/q/328019
 #define PI 3.1415926538
 
-
-
-
-
-
-
 float atan2(float x, float y) {
     return atan(x / 2, y / 2);
 }
@@ -58,12 +52,22 @@ float circle(float x, float y, float centerX, float centerY) {
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 layout(r32f, binding = 0) uniform image2D out_tex;
 
-// I have the empty lines above because I'm not used to looking at text above like half way down my screen
+// https://gamedev.stackexchange.com/questions/82907/opengl-compute-shader-uniforms
+layout(location = 1) uniform vec2 offset;
+layout(location = 2) uniform vec2 srcSize;
+
 void main() {
     // get position to read/write data from
-    ivec2 pos = ivec2(gl_GlobalInvocationID.xy);// get value stored in the image
-    ivec2 posPixel = ivec2((gl_GlobalInvocationID.xy - vec2(1024, 1024 /* just a bit of safety, probably unecessary */)) * vec2(10, -10));// get value stored in the image
-    float in_val = imageLoad(out_tex, pos).r;// store new value in image
+    ivec2 pos = ivec2(gl_GlobalInvocationID.xy);
+    ivec2 posPixel = ivec2(((gl_GlobalInvocationID.xy / srcSize) - vec2(0.5, 0.5) + offset) * vec2(2048 * 2, 2048 * -2));
+    vec2 posCompute = vec2(0,0);
+    if (srcSize.x < srcSize.y) {
+        float maxRes = srcSize.x / srcSize.y;
+        posCompute = ((vec2(posPixel.x, posPixel.y / maxRes)));
+    } else {
+        float maxRes = srcSize.y / srcSize.x;
+        posCompute = ((vec2(posPixel.x / maxRes, posPixel.y)));
+    }
 
     float m = -2990;
     float v = -2120;
@@ -84,9 +88,11 @@ void main() {
     float k = -1220;
 
     if (
-        ((((polygon(posPixel.x,posPixel.y,c,v,3)+polygon(posPixel.x,posPixel.y,p,z,5)+polygon(posPixel.x,posPixel.y,u,i,5)+polygon(q,k,d,r,5)))/5)/
-        (polygon(posPixel.x,posPixel.y,m,n,6)+circle(posPixel.x,posPixel.y,d,r)))<=0.5
+        ((((polygon(posCompute.x,posCompute.y,c,v,3)+polygon(posCompute.x,posCompute.y,p,z,5)+polygon(posCompute.x,posCompute.y,u,i,5)+polygon(q,k,d,r,5)))/5)/
+        (polygon(posCompute.x,posCompute.y,m,n,6)+circle(posCompute.x,posCompute.y,d,r)))<=0.5
     ) {
         imageStore(out_tex, pos, vec4(1, 0, 0.0, 1));
+    } else {
+        imageStore(out_tex, pos, vec4(0, 0, 0.0, 1));
     }
 }

@@ -3,9 +3,10 @@ package client;
 import client.render.Uniform;
 import client.render.gl.ShaderProgram;
 import client.render.gl.VertexBuffer;
+import client.render.glfw.KeyEvent;
 import client.render.glfw.Window;
 import client.render.utils.*;
-import common.map.Tile;
+import common.map.MapView;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
@@ -32,7 +33,7 @@ public class Main {
 		window = new Window(300, 300, "game");
 		window.center();
 		window.initOpenGL();
-		window.setSwapInterval(1); // vsync
+		window.setSwapInterval(2); // vsync
 		window.show();
 		window.grabContext();
 		GL.createCapabilities();
@@ -65,16 +66,73 @@ public class Main {
 		
 		program.bind();
 		
-		scale.set(1f, 1);
-		offset.set(0f,0);
+		scale.set(1, 1f);
+		scale.upload();
+		offset.set(0, 0f);
+		offset.upload();
 		
 		flags.upload();
 		program.unbind();
 		
-		Tile tile = new Tile(0, 0);
-		texture.set(tile.texture.id());
-		init2D(matrix, projMat);
-		while (!window.shouldClose()) tick();
+		window.finishFrame();
+		
+		MapView tile = new MapView();
+		
+		int lw = 0;
+		int lh = 0;
+		final float[] dx = {0};
+		final float[] dy = {0};
+		
+		boolean[] keysPressed = new boolean[4];
+		window.addKeyListener((event) -> {
+			boolean v;
+			if ((v = (event.getAction() == KeyEvent.KEY_PRESS)) || event.getAction() == KeyEvent.KEY_RELEASED) {
+				switch (Character.toLowerCase(event.getCharacter())) {
+					case 'w':
+						keysPressed[0] = v;
+						break;
+					case 's':
+						keysPressed[1] = v;
+						break;
+					case 'd':
+						keysPressed[2] = v;
+						break;
+					case 'a':
+						keysPressed[3] = v;
+				}
+			}
+		});
+		
+		while (!window.shouldClose()) {
+			if (lh != window.getHeight() || lw != window.getWidth()) {
+				lw = window.getWidth();
+				lh = window.getHeight();
+				
+				tile.setSize(window.getWidth(), window.getHeight());
+				texture.set(tile.getTexture().id());
+				init2D(matrix, projMat);
+				
+				Shaders.getMap().bind();
+				Uniform srcSize = Shaders.getMap().getUniform("srcSize", 2, true);
+				srcSize.set((float) window.getWidth(), window.getHeight());
+				srcSize.upload();
+				Shaders.getMap().unbind();
+			}
+			
+			if (keysPressed[0]) dy[0] -= 0.01f;
+			if (keysPressed[1]) dy[0] += 0.01f;
+			if (keysPressed[2]) dx[0] += 0.01f;
+			if (keysPressed[3]) dx[0] -= 0.01f;
+			
+			Shaders.getMap().bind();
+			Uniform mapOffset = Shaders.getMap().getUniform("offset", 2, true);
+			mapOffset.set(dx[0], dy[0]);
+			mapOffset.upload();
+			Shaders.getMap().unbind();
+			
+			tile.compute();
+			tick();
+		}
 		
 		window.hide();
 		window.dispose();

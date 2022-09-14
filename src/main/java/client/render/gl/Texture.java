@@ -67,4 +67,8 @@ public class Texture {
 		stack.pop();
 		return data;
 	}
+	
+	public void close() {
+		GL11.glDeleteTextures(id);
+	}
 }

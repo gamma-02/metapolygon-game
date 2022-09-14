@@ -59,8 +59,10 @@ public class GLUniform implements Uniform {
 		switch (type) {
 			case GL11.GL_FLOAT:
 				floats = stack.callocFloat(count);
+				break;
 			case GL11.GL_INT:
 				ints = stack.callocInt(count);
+				break;
 		}
 	}
 	
