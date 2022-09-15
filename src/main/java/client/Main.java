@@ -1,5 +1,6 @@
 package client;
 
+import client.render.Shaders;
 import client.render.Uniform;
 import client.render.gl.ShaderProgram;
 import client.render.gl.VertexBuffer;

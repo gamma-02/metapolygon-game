@@ -1,7 +1,7 @@
 package common.map;
 
 import client.render.gl.Texture;
-import client.render.utils.Shaders;
+import client.render.Shaders;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL43C;
