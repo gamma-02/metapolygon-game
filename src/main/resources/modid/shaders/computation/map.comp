@@ -31,6 +31,38 @@ float polygon(float x, float y, float centerX, float centerY, float sides) {
     return polygon(x, y, centerX, centerY, 1.0, 1.0, sides);
 }
 
+// https://www.desmos.com/calculator/ov9odkqnry
+float polygon(float x, float y, float centerX, float centerY, float scaleX, float scaleY, float sides, float rotation) {
+    x -= centerX;
+    y -= centerY;
+    x *= scaleX;
+    y *= scaleY;
+
+    float c = cos(rotation);
+    float s = sin(rotation);
+
+    float tx = x;
+    float ty = y;
+    x = c * tx + s * ty;
+    x = c * ty + s * tx;
+
+    // luigi: somehow I got this on my first try
+    return pow(max(0,
+        (1 / cos(PI / sides)) *
+        cos(abs(
+            ((2 * PI) / sides) *
+            floor(sides / (2 * PI) * atan2(y, x)) +
+            (PI / sides) -
+            atan2(y, x)
+        )) *
+        sqrt(x * x + y * y)
+    ), -1);
+}
+
+float polygon(float x, float y, float centerX, float centerY, float sides, float rotation) {
+    return polygon(x, y, centerX, centerY, 1.0, 1.0, sides, rotation);
+}
+
 float circle(float x, float y, float centerX, float centerY, float scaleX, float scaleY) {
     x -= centerX;
     y -= centerY;
@@ -55,11 +87,13 @@ layout(r32f, binding = 0) uniform image2D out_tex;
 // https://gamedev.stackexchange.com/questions/82907/opengl-compute-shader-uniforms
 layout(location = 1) uniform vec2 offset;
 layout(location = 2) uniform vec2 srcSize;
+layout(location = 3) uniform float delta;
 
 void main() {
     // get position to read/write data from
     ivec2 pos = ivec2(gl_GlobalInvocationID.xy);
-    ivec2 posPixel = ivec2(((gl_GlobalInvocationID.xy / srcSize) - vec2(0.5, 0.5)) * vec2(2048 * 2, 2048 * -2));
+    float scale = 2048*5;
+    ivec2 posPixel = ivec2(((gl_GlobalInvocationID.xy / srcSize) - vec2(0.5, 0.5)) * vec2(scale * 2, scale * -2));
     vec2 posCompute = vec2(0,0);
     if (srcSize.x < srcSize.y) {
         float maxRes = srcSize.x / srcSize.y;
@@ -68,7 +102,7 @@ void main() {
         float maxRes = srcSize.y / srcSize.x;
         posCompute = ((vec2(posPixel.x / maxRes, posPixel.y)));
     }
-    posCompute = posCompute + (offset * vec2(2048, 2048));
+    posCompute = posCompute + (offset * vec2(scale, scale));
 
     float m = -2990;
     float v = -2120;
@@ -88,12 +122,14 @@ void main() {
     float q = 2810;
     float k = -1220;
 
-    if (
-        ((((polygon(posCompute.x,posCompute.y,c,v,3)+polygon(posCompute.x,posCompute.y,p,z,5)+polygon(posCompute.x,posCompute.y,u,i,5)+polygon(q,k,d,r,5)))/5)/
-        (polygon(posCompute.x,posCompute.y,m,n,6)+circle(posCompute.x,posCompute.y,d,r)))<=0.5
-    ) {
-        imageStore(out_tex, pos, vec4(1, 0, 0.0, 1));
-    } else {
-        imageStore(out_tex, pos, vec4(0, 0, 0.0, 1));
-    }
+    if (circle(posCompute.x, posCompute.y, 0, 0) > 0.00005) {
+        if (
+            ((((polygon(posCompute.x,posCompute.y,c,v,3)+polygon(posCompute.x,posCompute.y,p,z,5)+polygon(posCompute.x,posCompute.y,u,i,5)+polygon(q,k,d,r,5)))/5)/
+            (polygon(posCompute.x,posCompute.y,m,n,6)+circle(posCompute.x,posCompute.y,d,r)))<=0.5
+        ) {
+            imageStore(out_tex, pos, vec4(1, 0, 0.0, 1));
+        } else {
+            imageStore(out_tex, pos, vec4(0, 0, 0.0, 1));
+        }
+    } else imageStore(out_tex, pos, vec4(0.5, 0, 0.0, 1));
 }

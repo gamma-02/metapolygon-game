@@ -105,6 +105,8 @@ public class Main {
 			}
 		});
 		
+		float deltaTick = 0;
+		
 		while (!window.shouldClose()) {
 			if (lh != window.getHeight() || lw != window.getWidth()) {
 				lw = window.getWidth();
@@ -130,6 +132,10 @@ public class Main {
 			Uniform mapOffset = Shaders.getMap().getUniform("offset", 2, true);
 			mapOffset.set(dx[0], dy[0]);
 			mapOffset.upload();
+			
+			Uniform delta = Shaders.getMap().getUniform("delta", 1, true);
+			delta.set(deltaTick += 0.01f);
+			delta.upload();
 			Shaders.getMap().unbind();
 			
 			tile.compute();
