@@ -68,7 +68,7 @@ void main() {
         float maxRes = srcSize.y / srcSize.x;
         posCompute = ((vec2(posPixel.x / maxRes, posPixel.y)));
     }
-    posCompute = posCompute + (offset * vec2(2048, -2048));
+    posCompute = posCompute + (offset * vec2(2048, 2048));
 
     float m = -2990;
     float v = -2120;

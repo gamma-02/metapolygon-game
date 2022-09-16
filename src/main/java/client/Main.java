@@ -95,11 +95,12 @@ public class Main {
 					case 's':
 						keysPressed[1] = v;
 						break;
-					case 'd':
+					case 'a':
 						keysPressed[2] = v;
 						break;
-					case 'a':
+					case 'd':
 						keysPressed[3] = v;
+						break;
 				}
 			}
 		});
@@ -120,10 +121,10 @@ public class Main {
 				Shaders.getMap().unbind();
 			}
 			
-			if (keysPressed[0]) dy[0] -= 0.01f;
-			if (keysPressed[1]) dy[0] += 0.01f;
-			if (keysPressed[2]) dx[0] += 0.01f;
-			if (keysPressed[3]) dx[0] -= 0.01f;
+			if (keysPressed[0]) dy[0] += 0.01f;
+			if (keysPressed[1]) dy[0] -= 0.01f;
+			if (keysPressed[2]) dx[0] -= 0.01f;
+			if (keysPressed[3]) dx[0] += 0.01f;
 			
 			Shaders.getMap().bind();
 			Uniform mapOffset = Shaders.getMap().getUniform("offset", 2, true);
